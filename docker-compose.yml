@@ -1,0 +1,43 @@
+version: '3'
+services:
+  php:
+    #image: php:7.2-fpm
+    build: ./php
+    ports:
+      - 9000:9000
+    volumes:
+      #- ./php.ini-development:/usr/local/etc/php/php.ini
+      - ./laravelexperiment:/laravelexperiment
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+      - ./laravelexperiment:/laravelexperiment
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: devpassword
+      MYSQL_ROOT_PASSWORD: devpassword
+    volumes:
+      - ./dbdata:/var/lib/mysql/
+  composer:
+    image: composer
+    volumes:
+      - ./laravelexperiment:/app
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+  mail:
+    image: djfarrelly/maildev
+    ports:
+      - "1080:80"
+  
